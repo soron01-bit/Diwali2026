@@ -152,6 +152,29 @@ class DiwaliAudioEngine {
     chime.stop(now + 1.5);
   }
 
+  // Rhythmic Sacred Temple Bells (celebratory fanfare)
+  playTempleBells() {
+    if (this.isMuted || !this.ctx) return;
+    this.resume();
+    const notes = [880.0, 987.77, 1174.66, 1318.51, 1479.98];
+    for (let i = 0; i < 7; i++) {
+      setTimeout(() => {
+        if (!this.ctx || this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(notes[i % notes.length], now);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+        osc.connect(gain);
+        gain.connect(this.sfxGain);
+        osc.start(now);
+        osc.stop(now + 0.9);
+      }, i * 150);
+    }
+  }
+
   // Sparkler (Phooljhadi) crackle burst
   playSparklerCrackle() {
     if (this.isMuted || !this.ctx) return;

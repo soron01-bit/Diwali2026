@@ -48,7 +48,7 @@ Because this project is built using native ES modules and standard web standards
 ```bash
 npm start
 # or
-node server.js
+node dev-server.js
 ```
 Then open: **`http://localhost:3000`** in your browser.
 
