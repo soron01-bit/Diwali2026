@@ -26,11 +26,23 @@ export class DiwaliCanvasApp {
     // Mode: 'diya' | 'sparkler' | 'chakri' | 'anaar' | 'rocket' | 'lantern'
     this.activeMode = 'diya';
 
-    // Pointer state
+    // Sky theme: 'midnight' | 'twilight' | 'crimson'
+    this.skyTheme = 'midnight';
+
+    // Rangoli Guide System
+    this.rangoliGuideActive = false;
+    this.rangoliPoints = [];
+    this.rangoliCompleted = false;
+    this.onRangoliProgress = null;
+    this.onRangoliComplete = null;
+
+    // Pointer state & drag-to-draw
     this.mouseX = null;
     this.mouseY = null;
     this.isPointerDown = false;
     this.lastSparklerEmit = 0;
+    this.lastDiyaX = null;
+    this.lastDiyaY = null;
 
     // Stats / callbacks
     this.onDiyaCountChange = null;
@@ -41,6 +53,7 @@ export class DiwaliCanvasApp {
   init() {
     this.resize();
     this.generateStars();
+    this.generateRangoliPoints();
     this.bindEvents();
     this.startLoop();
   }
@@ -54,6 +67,7 @@ export class DiwaliCanvasApp {
     this.canvas.style.height = `${this.height}px`;
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.scale(this.dpr, this.dpr);
+    this.generateRangoliPoints();
   }
 
   generateStars() {
@@ -68,6 +82,64 @@ export class DiwaliCanvasApp {
         baseAlpha: 0.3 + Math.random() * 0.6
       });
     }
+  }
+
+  generateRangoliPoints() {
+    this.rangoliPoints = [];
+    const cx = this.width * 0.5;
+    const cy = this.height * 0.84;
+    const scale = Math.min(this.width / 950, 1.0);
+
+    // 1. Center sacred Diya
+    this.rangoliPoints.push({ id: 0, x: cx, y: cy, isLit: false });
+
+    // 2. Inner Ring (6 points)
+    const innerR = 56 * scale;
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * Math.PI * 2) / 6;
+      this.rangoliPoints.push({
+        id: this.rangoliPoints.length,
+        x: cx + Math.cos(angle) * innerR,
+        y: cy + Math.sin(angle) * (innerR * 0.44),
+        isLit: false
+      });
+    }
+
+    // 3. Middle Lotus Petal Ring (12 points)
+    const midR = 125 * scale;
+    for (let j = 0; j < 12; j++) {
+      const angle = (j * Math.PI * 2) / 12;
+      this.rangoliPoints.push({
+        id: this.rangoliPoints.length,
+        x: cx + Math.cos(angle) * midR,
+        y: cy + Math.sin(angle) * (midR * 0.44),
+        isLit: false
+      });
+    }
+
+    // 4. Outer Lotus Tips (8 points)
+    const outerR = 195 * scale;
+    for (let k = 0; k < 8; k++) {
+      const angle = (k * Math.PI * 2) / 8 + Math.PI / 8;
+      this.rangoliPoints.push({
+        id: this.rangoliPoints.length,
+        x: cx + Math.cos(angle) * outerR,
+        y: cy + Math.sin(angle) * (outerR * 0.44),
+        isLit: false
+      });
+    }
+  }
+
+  toggleRangoliGuide() {
+    this.rangoliGuideActive = !this.rangoliGuideActive;
+    return this.rangoliGuideActive;
+  }
+
+  cycleSkyTheme() {
+    const themes = ['midnight', 'twilight', 'crimson'];
+    const nextIdx = (themes.indexOf(this.skyTheme) + 1) % themes.length;
+    this.skyTheme = themes[nextIdx];
+    return this.skyTheme;
   }
 
   bindEvents() {
@@ -90,22 +162,42 @@ export class DiwaliCanvasApp {
 
       updateCoords(e);
       this.isPointerDown = true;
+      this.lastDiyaX = this.mouseX;
+      this.lastDiyaY = this.mouseY;
       this.triggerInteraction(this.mouseX, this.mouseY);
     };
 
     const handlePointerMove = (e) => {
       updateCoords(e);
-      // Sparkler trail follows cursor if sparkler mode or pointer dragged
       const now = performance.now();
+
+      // Sparkler trail follows cursor
       if ((this.activeMode === 'sparkler' || this.isPointerDown) && now - this.lastSparklerEmit > 30) {
         this.particles.emitSparkler(this.mouseX, this.mouseY, 4);
         audio.playSparklerCrackle();
         this.lastSparklerEmit = now;
       }
+
+      // Drag-to-draw continuous Diya garland (distance throttled)
+      if (this.isPointerDown && this.activeMode === 'diya' && this.mouseY > this.height * 0.65) {
+        if (this.lastDiyaX !== null && this.lastDiyaY !== null) {
+          const dist = Math.hypot(this.mouseX - this.lastDiyaX, this.mouseY - this.lastDiyaY);
+          if (dist >= 52) {
+            this.addDiya(this.mouseX, this.mouseY);
+            this.lastDiyaX = this.mouseX;
+            this.lastDiyaY = this.mouseY;
+          }
+        } else {
+          this.lastDiyaX = this.mouseX;
+          this.lastDiyaY = this.mouseY;
+        }
+      }
     };
 
     const handlePointerEnd = () => {
       this.isPointerDown = false;
+      this.lastDiyaX = null;
+      this.lastDiyaY = null;
     };
 
     this.canvas.addEventListener('mousedown', handlePointerStart);
@@ -119,6 +211,8 @@ export class DiwaliCanvasApp {
     this.canvas.addEventListener('mouseleave', () => {
       this.mouseX = null;
       this.mouseY = null;
+      this.lastDiyaX = null;
+      this.lastDiyaY = null;
     });
   }
 
@@ -154,16 +248,56 @@ export class DiwaliCanvasApp {
   }
 
   addDiya(x, y, scale = 1.0) {
+    let targetX = x;
+    let targetY = y;
+
+    // Magnetic snapping to Rangoli Guide points
+    if (this.rangoliGuideActive) {
+      const snapThreshold = 38;
+      let closestPt = null;
+      let minDist = Infinity;
+
+      for (const pt of this.rangoliPoints) {
+        if (!pt.isLit) {
+          const d = Math.hypot(x - pt.x, y - pt.y);
+          if (d < minDist && d < snapThreshold) {
+            minDist = d;
+            closestPt = pt;
+          }
+        }
+      }
+
+      if (closestPt) {
+        targetX = closestPt.x;
+        targetY = closestPt.y;
+        closestPt.isLit = true;
+
+        const litCount = this.rangoliPoints.filter(p => p.isLit).length;
+        if (this.onRangoliProgress) {
+          this.onRangoliProgress(litCount, this.rangoliPoints.length);
+        }
+
+        if (litCount === this.rangoliPoints.length && !this.rangoliCompleted) {
+          this.rangoliCompleted = true;
+          audio.playTempleBells();
+          this.triggerGrandCelebration();
+          if (this.onRangoliComplete) {
+            this.onRangoliComplete();
+          }
+        }
+      }
+    }
+
     // Dynamic scale based on perspective (lower down = closer & slightly larger)
-    const perspectiveScale = scale * (0.8 + (y / this.height) * 0.45);
-    const diya = new Diya(x, y, perspectiveScale);
+    const perspectiveScale = scale * (0.8 + (targetY / this.height) * 0.45);
+    const diya = new Diya(targetX, targetY, perspectiveScale);
     this.diyas.push(diya);
 
     // Play chime sound
     audio.playDiyaChime();
 
     // Small burst of birth embers
-    this.particles.emitSparkler(x, y - 10, 8);
+    this.particles.emitSparkler(targetX, targetY - 10, 8);
 
     if (this.onDiyaCountChange) {
       this.onDiyaCountChange(this.diyas.length);
@@ -212,20 +346,38 @@ export class DiwaliCanvasApp {
   clearDiyas() {
     this.diyas = [];
     this.particles.clear();
+    this.rangoliPoints.forEach(p => p.isLit = false);
+    this.rangoliCompleted = false;
     if (this.onDiyaCountChange) {
       this.onDiyaCountChange(0);
+    }
+    if (this.onRangoliProgress) {
+      this.onRangoliProgress(0, this.rangoliPoints.length);
     }
   }
 
   drawSkyAndFloor(now) {
     const ctx = this.ctx;
 
-    // 1. Celestial Night Sky Gradient
+    // 1. Celestial Night Sky Gradient (Dynamic Theme)
     const skyGrad = ctx.createLinearGradient(0, 0, 0, this.height);
-    skyGrad.addColorStop(0, '#04020a');    // Deep cosmic void
-    skyGrad.addColorStop(0.5, '#0b041a');  // Deep Midnight Indigo
-    skyGrad.addColorStop(0.78, '#1b0833'); // Twilight Saffron Aura
-    skyGrad.addColorStop(1, '#0c0517');    // Courtyard floor base
+    if (this.skyTheme === 'twilight') {
+      skyGrad.addColorStop(0, '#150324');    // Rich violet
+      skyGrad.addColorStop(0.45, '#3b0d38'); // Twilight rose
+      skyGrad.addColorStop(0.78, '#852d2b'); // Saffron sunset
+      skyGrad.addColorStop(1, '#1b0616');    // Courtyard horizon
+    } else if (this.skyTheme === 'crimson') {
+      skyGrad.addColorStop(0, '#190310');    // Deep ruby
+      skyGrad.addColorStop(0.45, '#42081f'); // Crimson festive
+      skyGrad.addColorStop(0.78, '#6b1426'); // Vibrant vermilion
+      skyGrad.addColorStop(1, '#1f0412');    // Warm stone floor
+    } else {
+      // Midnight (Default)
+      skyGrad.addColorStop(0, '#04020a');    // Deep cosmic void
+      skyGrad.addColorStop(0.5, '#0b041a');  // Deep Midnight Indigo
+      skyGrad.addColorStop(0.78, '#1b0833'); // Twilight Saffron Aura
+      skyGrad.addColorStop(1, '#0c0517');    // Courtyard floor base
+    }
 
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, this.width, this.height);
@@ -244,7 +396,7 @@ export class DiwaliCanvasApp {
     }
     ctx.restore();
 
-    // 3. Courtyard Ground Horizon with Subtle Golden Rangoli Halo
+    // 3. Courtyard Ground Horizon
     const groundY = this.height * 0.72;
     const floorGrad = ctx.createLinearGradient(0, groundY, 0, this.height);
     floorGrad.addColorStop(0, 'rgba(40, 15, 60, 0.45)');
@@ -262,23 +414,69 @@ export class DiwaliCanvasApp {
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Rangoli floor mandala watermark at the center
-    ctx.save();
-    ctx.globalAlpha = 0.08;
-    ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 1;
-    const cx = this.width * 0.5;
-    const cy = this.height * 0.86;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 220, 75, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 140, 48, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 60, 20, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
+    // 4. Interactive Sacred Rangoli Guide Stencil
+    if (this.rangoliGuideActive) {
+      ctx.save();
+      const cx = this.width * 0.5;
+      const cy = this.height * 0.84;
+      const scale = Math.min(this.width / 950, 1.0);
+
+      // Sacred mandala concentric rings
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.28)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 56 * scale, 25 * scale, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, 125 * scale, 55 * scale, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, 195 * scale, 86 * scale, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Render guide points
+      for (const pt of this.rangoliPoints) {
+        const pulse = Math.sin(now * 0.005 + pt.id) * 0.3 + 0.7;
+        if (!pt.isLit) {
+          // Golden target ring
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 8 * pulse, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(255, 215, 0, ${0.45 * pulse})`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Target center spark
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 240, 150, ${0.9 * pulse})`;
+          ctx.fill();
+        } else {
+          // Completed point soft aura
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 14, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 200, 50, 0.12)';
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    } else {
+      // Subtle background watermark when guide is inactive
+      ctx.save();
+      ctx.globalAlpha = 0.08;
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 1;
+      const cx = this.width * 0.5;
+      const cy = this.height * 0.86;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 220, 75, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 140, 48, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 60, 20, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   startLoop() {
@@ -303,4 +501,3 @@ export class DiwaliCanvasApp {
     requestAnimationFrame(loop);
   }
 }
-

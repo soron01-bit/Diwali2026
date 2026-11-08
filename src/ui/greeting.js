@@ -114,7 +114,9 @@ export class GreetingManager {
     const to = encodeURIComponent(this.toInput?.value.trim() || '');
     const msg = encodeURIComponent(this.msgInput?.value.trim() || '');
 
-    const url = new URL(window.location.origin + window.location.pathname);
+    // Set production shareable URL base
+    const baseUrl = 'https://diwali2026-blush.vercel.app/';
+    const url = new URL(baseUrl);
     if (to) url.searchParams.set('to', decodeURIComponent(to));
     if (from) url.searchParams.set('from', decodeURIComponent(from));
     if (msg) url.searchParams.set('msg', decodeURIComponent(msg));

@@ -12,7 +12,10 @@ export class ControlsManager {
     this.soundIcon = document.getElementById('soundIcon');
     this.grandCelebrationBtn = document.getElementById('grandCelebrationBtn');
     this.clearBtn = document.getElementById('clearBtn');
-    this.modeButtons = document.querySelectorAll('.mode-btn');
+    this.fullscreenBtn = document.getElementById('fullscreenBtn');
+    this.themeToggleBtn = document.getElementById('themeToggleBtn');
+    this.rangoliToggleBtn = document.getElementById('rangoliToggleBtn');
+    this.modeButtons = document.querySelectorAll('.mode-btn:not(#rangoliToggleBtn)');
 
     this.diyaCount = 0;
     this.celebratedMilestones = new Set();
@@ -25,6 +28,7 @@ export class ControlsManager {
     this.bindSoundToggle();
     this.bindActionButtons();
     this.bindCanvasStats();
+    this.bindExtraFeatures();
   }
 
   bindModeButtons() {
@@ -66,6 +70,49 @@ export class ControlsManager {
       this.celebratedMilestones.clear();
       this.showToast('Courtyard cleared. Light new diyas!');
     });
+
+    // Fullscreen toggle
+    this.fullscreenBtn?.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Sky Theme Cycle
+    this.themeToggleBtn?.addEventListener('click', () => {
+      const theme = this.canvasApp.cycleSkyTheme();
+      const themeNames = {
+        midnight: '🌌 Midnight Indigo Sky',
+        twilight: '🌅 Saffron Twilight Sky',
+        crimson: '🎆 Crimson Festival Sky'
+      };
+      this.showToast(themeNames[theme] || 'Sky Theme Changed');
+    });
+
+    // Rangoli Guide Toggle
+    this.rangoliToggleBtn?.addEventListener('click', () => {
+      const active = this.canvasApp.toggleRangoliGuide();
+      this.rangoliToggleBtn.classList.toggle('active', active);
+      if (active) {
+        this.showToast('🪷 Sacred Rangoli Guide on! Place diyas on the golden points.');
+      } else {
+        this.showToast('Rangoli Guide hidden.');
+      }
+    });
+  }
+
+  bindExtraFeatures() {
+    this.canvasApp.onRangoliProgress = (lit, total) => {
+      if (this.canvasApp.rangoliGuideActive) {
+        this.showToast(`🪷 Rangoli Mandala: ${lit} / ${total} Diyas Lit`);
+      }
+    };
+
+    this.canvasApp.onRangoliComplete = () => {
+      this.showToast('🎉 Sacred Rangoli Completed! May Divine Radiance Fill Your Home! ✨');
+    };
   }
 
   bindCanvasStats() {
@@ -111,4 +158,3 @@ export class ControlsManager {
     }, 3200);
   }
 }
-

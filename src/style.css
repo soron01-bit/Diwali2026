@@ -239,6 +239,13 @@ html, body {
   box-shadow: 0 0 14px rgba(255, 215, 0, 0.35);
 }
 
+#rangoliToggleBtn.active {
+  border-color: #ff85c0;
+  background: linear-gradient(135deg, rgba(255, 105, 180, 0.4), rgba(255, 215, 0, 0.35));
+  box-shadow: 0 0 16px rgba(255, 105, 180, 0.5);
+  color: #fff;
+}
+
 .mode-btn .btn-symbol {
   font-size: 1.15rem;
 }

@@ -7,7 +7,9 @@
   <meta name="description" content="Celebrate a virtual Diwali with countless glowing diyas, fireworks, sparklers, and personalized greetings!">
   <meta property="og:title" content="Virtual Diwali 2026 - Light a Diya & Celebrate!">
   <meta property="og:description" content="Light up sacred diyas, burst eco-friendly fireworks, and send heartfelt Diwali greetings!">
+  <meta property="og:url" content="https://diwali2026-blush.vercel.app/">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="https://diwali2026-blush.vercel.app/">
 
   <!-- Google Fonts: Festive Serif & Clean Modern Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,8 +43,16 @@
         <span class="btn-label-responsive">Grand Finale</span>
       </button>
 
+      <button id="themeToggleBtn" class="glass-btn btn-icon-only" title="Switch Atmosphere Theme">
+        <span>🌌</span>
+      </button>
+
       <button id="soundToggleBtn" class="glass-btn btn-icon-only" title="Toggle Festive Sound">
         <span id="soundIcon">🔇</span>
+      </button>
+
+      <button id="fullscreenBtn" class="glass-btn btn-icon-only" title="Toggle Fullscreen Mode">
+        <span>⛶</span>
       </button>
 
       <button id="clearBtn" class="glass-btn btn-icon-only" title="Clear Canvas">
@@ -53,14 +63,18 @@
 
   <!-- First Interaction Hint -->
   <div id="tapHint" class="tap-hint">
-    ✨ Click anywhere to light a sacred Diya 🪔
+    ✨ Click or drag anywhere to light sacred Diyas 🪔
   </div>
 
   <!-- Bottom Interactive Tool Dock -->
   <nav class="bottom-dock">
-    <button class="mode-btn active" data-mode="diya" title="Place Clay Diyas">
+    <button class="mode-btn active" data-mode="diya" title="Place Clay Diyas (Click or Drag)">
       <span class="btn-symbol">🪔</span>
       <span>Diya</span>
+    </button>
+    <button id="rangoliToggleBtn" class="mode-btn" title="Toggle Sacred Rangoli Mandala Guide">
+      <span class="btn-symbol">🪷</span>
+      <span>Rangoli</span>
     </button>
     <button class="mode-btn" data-mode="sparkler" title="Phooljhadi Sparkler Trail">
       <span class="btn-symbol">✨</span>
