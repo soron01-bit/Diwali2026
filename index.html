@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Virtual Diwali 2026 - Festival of Lights Celebration</title>
+  <meta name="description" content="Celebrate a virtual Diwali with countless glowing diyas, fireworks, sparklers, and personalized greetings!">
+  <meta property="og:title" content="Virtual Diwali 2026 - Light a Diya & Celebrate!">
+  <meta property="og:description" content="Light up sacred diyas, burst eco-friendly fireworks, and send heartfelt Diwali greetings!">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Festive Serif & Clean Modern Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+
+  <!-- Fullscreen Interactive Celebratory Canvas -->
+  <canvas id="diwaliCanvas"></canvas>
+
+  <!-- Top Festive Navigation Bar -->
+  <header class="top-bar">
+    <div class="brand-section">
+      <h1 class="brand-title">Diwali 2026</h1>
+      <div id="diyaCounter" class="diya-badge">
+        <span>🪔</span> 0 Diyas Lit
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="openGreetingBtn" class="glass-btn glow-btn" title="Create Personalized Greeting">
+        <span>💌</span>
+        <span class="btn-label-responsive">Send Greeting</span>
+      </button>
+
+      <button id="grandCelebrationBtn" class="glass-btn" title="Trigger Grand Fireworks Finale">
+        <span>🎆</span>
+        <span class="btn-label-responsive">Grand Finale</span>
+      </button>
+
+      <button id="soundToggleBtn" class="glass-btn btn-icon-only" title="Toggle Festive Sound">
+        <span id="soundIcon">🔇</span>
+      </button>
+
+      <button id="clearBtn" class="glass-btn btn-icon-only" title="Clear Canvas">
+        <span>🧹</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- First Interaction Hint -->
+  <div id="tapHint" class="tap-hint">
+    ✨ Click anywhere to light a sacred Diya 🪔
+  </div>
+
+  <!-- Bottom Interactive Tool Dock -->
+  <nav class="bottom-dock">
+    <button class="mode-btn active" data-mode="diya" title="Place Clay Diyas">
+      <span class="btn-symbol">🪔</span>
+      <span>Diya</span>
+    </button>
+    <button class="mode-btn" data-mode="sparkler" title="Phooljhadi Sparkler Trail">
+      <span class="btn-symbol">✨</span>
+      <span>Sparkler</span>
+    </button>
+    <button class="mode-btn" data-mode="chakri" title="Chakri Ground Spinner">
+      <span class="btn-symbol">🌀</span>
+      <span>Chakri</span>
+    </button>
+    <button class="mode-btn" data-mode="anaar" title="Anaar Fountain">
+      <span class="btn-symbol">🌋</span>
+      <span>Anaar</span>
+    </button>
+    <button class="mode-btn" data-mode="rocket" title="Sky Fireworks Rocket">
+      <span class="btn-symbol">🎆</span>
+      <span>Rockets</span>
+    </button>
+    <button class="mode-btn" data-mode="lantern" title="Floating Sky Lantern">
+      <span class="btn-symbol">🏮</span>
+      <span>Lantern</span>
+    </button>
+  </nav>
+
+  <!-- Personalized Greeting Modal -->
+  <div id="greetingModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button id="closeModalBtn" class="close-modal-btn" aria-label="Close Modal">&times;</button>
+      <div class="modal-header">
+        <div class="card-ornament">✧ 🪔 ✧</div>
+        <h2 class="modal-title">Personalized Greeting</h2>
+        <p class="modal-subtitle">Create and share a glowing Diwali greeting card</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="fromInput">Your Name (Sender)</label>
+          <input type="text" id="fromInput" class="festive-input" placeholder="e.g. Aarav Sharma" value="Aarav">
+        </div>
+
+        <div class="form-group">
+          <label for="toInput">Recipient's Name</label>
+          <input type="text" id="toInput" class="festive-input" placeholder="e.g. Priya & Family" value="Priya">
+        </div>
+
+        <div class="form-group">
+          <label for="msgInput">Personal Blessing / Wish</label>
+          <textarea id="msgInput" class="festive-input" rows="3" placeholder="Enter your Diwali blessing...">May the divine light of Diwali illuminate your life with infinite joy, peace, prosperity, and happiness!</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="shareLinkInput">Personalized Shareable URL</label>
+          <div class="share-link-box">
+            <input type="text" id="shareLinkInput" class="festive-input" readonly>
+            <button id="copyLinkBtn" class="glass-btn">Copy</button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="whatsappBtn" class="festive-btn whatsapp-btn">
+            <span>💬</span> Share via WhatsApp
+          </button>
+          <button id="downloadCardBtn" class="festive-btn download-btn">
+            <span>📸</span> Download High-Res Greeting Card (PNG)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome / Dedication Overlay (Shown when opened via shared link) -->
+  <div id="welcomeBanner" class="welcome-banner-overlay hidden"></div>
+
+  <!-- Toast Notification Bar -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Main JavaScript App -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
+

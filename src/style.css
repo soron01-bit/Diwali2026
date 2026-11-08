@@ -1,0 +1,549 @@
+/* ==========================================================================
+   Virtual Diwali 2026 - Modern Festive Glassmorphic Design System
+   ========================================================================== */
+
+:root {
+  --gold-primary: #ffd700;
+  --gold-light: #fff3a8;
+  --gold-dark: #b8860b;
+  --saffron: #ff8c00;
+  --vermilion: #ff4500;
+  --night-deep: #05020d;
+  --night-card: rgba(18, 9, 32, 0.78);
+  --glass-border: rgba(255, 215, 0, 0.28);
+  --glass-border-hover: rgba(255, 215, 0, 0.65);
+  --glow-warm: 0 0 25px rgba(255, 175, 45, 0.45);
+  --font-serif: 'Cinzel Decorative', 'Georgia', serif;
+  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--night-deep);
+  font-family: var(--font-sans);
+  color: #fff;
+}
+
+/* Master Canvas */
+#diwaliCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  touch-action: none;
+}
+
+/* Top Navigation Bar */
+.top-bar {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff7cc, var(--gold-primary), #ff9900);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(255, 180, 0, 0.4));
+  letter-spacing: 1px;
+}
+
+.diya-badge {
+  background: var(--night-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  padding: 6px 14px;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+/* Glassmorphic Buttons */
+.glass-btn {
+  background: var(--night-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.glass-btn:hover {
+  border-color: var(--glass-border-hover);
+  background: rgba(45, 20, 75, 0.85);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-warm);
+}
+
+.glass-btn:active {
+  transform: translateY(1px);
+}
+
+.glass-btn.sound-active {
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+}
+
+.btn-icon-only {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.15rem;
+}
+
+/* Festive Glowing Highlight Button */
+.glow-btn {
+  background: linear-gradient(135deg, #e65c00, #f9d423);
+  color: #120402;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(249, 212, 35, 0.45);
+}
+
+.glow-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 25px rgba(249, 212, 35, 0.7);
+}
+
+/* First-time Interaction Hint */
+.tap-hint {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 6, 28, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  padding: 14px 28px;
+  border-radius: 30px;
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--gold-light);
+  box-shadow: var(--glow-warm);
+  z-index: 10;
+  pointer-events: none;
+  animation: pulseHint 2.4s infinite ease-in-out;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes pulseHint {
+  0%, 100% { opacity: 0.95; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.65; transform: translate(-50%, -50%) scale(0.97); }
+}
+
+.fade-out {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) scale(0.9) !important;
+}
+
+/* Bottom Control Toolbar */
+.bottom-dock {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--night-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-border);
+  padding: 8px 14px;
+  border-radius: 36px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), var(--glow-warm);
+  z-index: 10;
+}
+
+.mode-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #d1c4e9;
+  padding: 8px 14px;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.22s ease;
+}
+
+.mode-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.35), rgba(255, 215, 0, 0.35));
+  border-color: var(--gold-primary);
+  color: var(--gold-light);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.35);
+}
+
+.mode-btn .btn-symbol {
+  font-size: 1.15rem;
+}
+
+.dock-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 215, 0, 0.2);
+  margin: 0 4px;
+}
+
+/* Modals & Overlays */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 2, 10, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.modal-content {
+  background: linear-gradient(175deg, #1b0a30 0%, #0d0417 100%);
+  border: 1.5px solid var(--gold-primary);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.25);
+  animation: modalEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #ddd;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-modal-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.card-ornament {
+  font-size: 1.25rem;
+  color: var(--gold-primary);
+  margin-bottom: 4px;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  background: linear-gradient(135deg, #fff5cc, var(--gold-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  font-size: 0.9rem;
+  color: #c9b8db;
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+}
+
+.festive-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.festive-input:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+textarea.festive-input {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.share-link-box {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.festive-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.whatsapp-btn {
+  background: #25d366;
+  color: #0b2b13;
+  border: none;
+}
+
+.whatsapp-btn:hover {
+  background: #2ee672;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+}
+
+.download-btn {
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-light);
+}
+
+.download-btn:hover {
+  background: rgba(255, 215, 0, 0.28);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Welcome Cinematic Banner */
+.welcome-banner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 2, 12, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  padding: 24px;
+  transition: opacity 0.5s ease;
+}
+
+.welcome-card {
+  background: radial-gradient(circle at 50% 20%, #291048 0%, #110522 100%);
+  border: 2px solid var(--gold-primary);
+  border-radius: 28px;
+  padding: 44px 36px;
+  max-width: 580px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(255, 215, 0, 0.35);
+  animation: modalEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.welcome-heading {
+  font-family: var(--font-serif);
+  font-size: 2.3rem;
+  background: linear-gradient(135deg, #fff7cc, var(--gold-primary), #ff9900);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+}
+
+.welcome-to {
+  font-size: 1.25rem;
+  color: var(--gold-light);
+  margin-bottom: 18px;
+}
+
+.welcome-to span {
+  font-weight: 700;
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: var(--gold-primary);
+}
+
+.welcome-message {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #f0e6ff;
+  font-style: italic;
+  margin-bottom: 22px;
+}
+
+.welcome-from {
+  font-size: 1rem;
+  color: #e0d0f5;
+  margin-bottom: 26px;
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: rgba(22, 10, 38, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--gold-primary);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 24px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.3);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Queries for Phones */
+@media (max-width: 768px) {
+  .brand-title {
+    font-size: 1.15rem;
+  }
+  .diya-badge {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+  }
+  .glass-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  .btn-label-responsive {
+    display: none;
+  }
+  .bottom-dock {
+    width: 92%;
+    justify-content: space-between;
+    padding: 6px 10px;
+    bottom: 14px;
+  }
+  .mode-btn {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+  .mode-btn span:last-child {
+    display: none; /* Icon-only dock on mobile */
+  }
+  .modal-content {
+    padding: 24px 20px;
+  }
+  .welcome-card {
+    padding: 30px 20px;
+  }
+  .welcome-heading {
+    font-size: 1.8rem;
+  }
+}
+

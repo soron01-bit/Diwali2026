@@ -1,0 +1,20 @@
+{
+  "name": "virtual-diwali-2026",
+  "version": "1.0.0",
+  "description": "Virtual Diwali Celebration Website - Glowing Diyas, Fireworks & Personalized Greetings",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "diwali",
+    "canvas",
+    "particles",
+    "fireworks",
+    "diya",
+    "web-audio"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
