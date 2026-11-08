@@ -46,7 +46,7 @@ Because this project is built using native ES modules and standard web standards
 
 ### Option 1: Run with Node.js
 ```bash
-npm start
+npm run dev
 # or
 node dev-server.js
 ```

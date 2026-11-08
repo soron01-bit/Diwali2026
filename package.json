@@ -4,9 +4,7 @@
   "description": "Virtual Diwali Celebration Website - Glowing Diyas, Fireworks & Personalized Greetings",
   "type": "module",
   "scripts": {
-    "dev": "node dev-server.js",
-    "start": "node dev-server.js",
-    "build": "echo 'Static site ready for deployment'"
+    "dev": "node dev-server.js"
   },
   "keywords": [
     "diwali",
